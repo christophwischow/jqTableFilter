@@ -1,4 +1,11 @@
 (function($) {
+  // unqiue function for arrays
+  function unique(array) {
+    return $.grep(array, function(el, index) {
+      return index == $.inArray(el, array);
+    });
+  }
+
   $.fn.jqTableFilter = function() {
     // object the plugin was called on
     var table = this;
@@ -25,8 +32,21 @@
       });
     });
 
-    // TODO: this is only temporary to make results visibile
-    console.log(selectOptions);
+    // replace table headers with select boxes
+    var i = 0;
+    $.each(selectOptions, function(index, value) {
+      value = unique(value);
+      if(value.length) {
+        var boxHtml = "<select>";
+        boxHtml = boxHtml + "<option value=\"all\">" +  table.find("th").eq(i).text() + "</option>";
+        $.each(value, function(innerIndex, innerValue) {
+          boxHtml = boxHtml + "<option>" + innerValue + "</option>";
+        });
+        boxHtml = boxHtml + "</select>";
+        table.find("th").eq(i).html(boxHtml);
+      }
+      i++;
+    });
 
     // preserve chainability
     return table;
