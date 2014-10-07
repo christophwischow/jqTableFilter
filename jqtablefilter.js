@@ -47,6 +47,40 @@
       }
       i++;
     });
+    
+    // register the filter event
+    table.find("select").on('change', function() {
+      var pivots = [];
+      var table = $(this).closest("table");
+      
+      var i = 0;
+      table.find("th").each(function() {
+        if($(this).children("select").val()) {
+          pivots[i] = $(this).children("select").val();
+        } else {
+          pivots[i] = null;
+        }
+        i++;
+      });
+
+      // iterate over all table rows
+      var iterations = $("tr").length-1;
+      for(var i = 0; i < iterations; i++) {
+        var col = 0;
+        // check if we have to hide this row
+        table.find("tr").eq(i+1).find("td").each(function() {
+          if(pivots[col] != null && pivots[col] != "all" && $(this).text() != pivots[col]) {
+            $(this).closest("tr").hide();
+            col++;
+            return false;
+          }
+
+          // if we reach this the row should be shown
+          $(this).closest("tr").show();
+          col++;
+        });
+      }
+    });
 
     // preserve chainability
     return table;
